@@ -1,0 +1,25 @@
+name: Auto Update OISD BIG & NSFW Source List
+
+on:
+  schedule:
+    - cron: 00 00 * * *
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@main
+      - name: OISD BIG & NSFW
+        run: |
+          echo "Downloading OISD BIG & NSFW File..."
+          curl -s 'https://big.oisd.nl/domainswild' -o oisd_big_domainswild.txt
+          awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_big_domainswild.txt > oisd_big.yaml
+          sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_big.yaml
+          curl -s 'https://nsfw.oisd.nl/domainswild' -o oisd_nsfw_domainswild.txt
+          awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_nsfw_domainswild.txt > oisd_nsfw.yaml
+          sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_nsfw.yaml
+          rm -fr oisd_big_domainswild.txt oisd_nsfw_domainswild.txt
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatic update
