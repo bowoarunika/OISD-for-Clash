@@ -12,14 +12,20 @@ jobs:
       - uses: actions/checkout@main
       - name: OISD BIG & NSFW
         run: |
-          echo "Downloading OISD BIG & NSFW File..."
+          echo "Downloading OISD BIG, OISD SMALL, NSFW BIG & NSFW SMALL File..."
           curl -s 'https://big.oisd.nl/domainswild' -o oisd_big_domainswild.txt
           awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_big_domainswild.txt > oisd_big.yaml
           sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_big.yaml
+          curl -s 'https://small.oisd.nl/domainswild' -o oisd_small_domainswild.txt
+          awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_small_domainswild.txt > oisd_small.yaml
+          sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_small.yaml
           curl -s 'https://nsfw.oisd.nl/domainswild' -o oisd_nsfw_domainswild.txt
           awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_nsfw_domainswild.txt > oisd_nsfw.yaml
           sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_nsfw.yaml
-          rm -fr oisd_big_domainswild.txt oisd_nsfw_domainswild.txt
+          curl -s 'https://nsfw-small.oisd.nl/domainswild' -o oisd_nsfw_small_domainswild.txt
+          awk '/^\*\./ && !x {print "# OISD for Clash: https://github.com/bowoarunika/OISD-For-Clash \n\npayload:"; x=1} 1' oisd_nsfw_small_domainswild.txt > oisd_nsfw_small.yaml
+          sed -i 's/^[*]\./  - DOMAIN-SUFFIX,/g' oisd_nsfw_small.yaml
+          rm -fr oisd_big_domainswild.txt oisd_small_domainswild.txt oisd_nsfw_domainswild.txt oisd_nsfw_small_domainswild.txt
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automatic update
